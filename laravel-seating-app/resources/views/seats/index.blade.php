@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>投稿一覧</title>
+    <title>登録一覧</title>
 </head>
 
 <body>
     <header>
         <nav>
             <div>
-            <a href="{{ route('seats.index') }}">投稿アプリ</a>          
+            <a href="{{ route('seats.index') }}">登録アプリ</a>          
             </div>
         </nav>
     </header>
@@ -19,20 +19,28 @@
     <main>
         <article>
             <div>                
-                <h1>投稿一覧</h1>
+                <h1>登録一覧</h1>
                 
                 @if (session('flash_message'))
                      <p>{{ session('flash_message') }}</p>
                 @endif
                 <div>
-                    <a href="{{ route('seats.create') }}">新規投稿</a>                                   
-                </div>               
+                    <a href="{{ route('seats.create') }}">新規登録</a>                                   
+                </div>
+                @foreach($seats as $seat)
+                
+                <div>
+                    <p>{{ $seat->name }} {{ $seat->studentId }} {{ $seat->ruby }}</p>
+                    <a href="{{ route('seats.show', $seat) }}">詳細</a>
+                    <a href="{{ route('seats.edit', $seat) }}">編集</a>
+                </div>
+                @endforeach
             </div>
         </article>
     </main>
 
     <footer>        
-        <p>&copy; 投稿アプリ All rights reserved.</p>
+        <p>&copy; 登録アプリ All rights reserved.</p>
     </footer>
 </body>
 

@@ -20,9 +20,13 @@ Route::get('/', function () {
 
 // 投稿の一覧ページ
 Route::get('/seats', [SeatController::class, 'index'])->name('seats.index');
-
 // 投稿の作成ページ
 Route::get('/seats/create', [SeatController::class, 'create'])->name('seats.create');
-
 // 投稿の作成機能
 Route::post('/seats', [SeatController::class, 'store'])->name('seats.store');
+// 投稿の詳細ページ
+Route::get('/seats/{seat}', [SeatController::class, 'show'])->name('seats.show');
+// 投稿の更新ページ
+Route::get('/seats/{seat}/edit', [SeatController::class, 'edit'])->name('seats.edit');
+// 投稿の更新機能
+Route::patch('/seats/{seat}', [SeatController::class, 'update'])->name('seats.update');

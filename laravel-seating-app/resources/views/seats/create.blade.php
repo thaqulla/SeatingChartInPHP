@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新規投稿</title>    
+    <title>新規登録</title>    
 </head>
 
 <body>
     <header>
         <nav>
             <div>                
-                <a href="{{ route('seats.index') }}">投稿アプリ</a>          
+                <a href="{{ route('seats.index') }}">登録アプリ</a>          
             </div>
         </nav>
     </header>
@@ -19,7 +19,7 @@
     <main>
         <article>
             <div>                
-                <h1>新規投稿</h1>   
+                <h1>新規登録</h1>   
                 
                 <div>
                     <a href="{{ route('seats.index') }}">&lt; 戻る</a>                                  
@@ -49,13 +49,13 @@
                     </div>
                     <div>
                         <span>新入室</span>
-                        <label><input type="radio" name="newStudent" value="ON">ON</label>
-                        <label><input type="radio" name="newStudent" value="OFF">OFF</label>
+                        <label><input type="radio" name="newStudent" value="1">ON</label>
+                        <label><input type="radio" name="newStudent" value="0">OFF</label>
                     </div>
                     <div>
                         <span>前方指定</span>
-                        <label><input type="radio" name="forward" value="ON">ON</label>
-                        <label><input type="radio" name="forward" value="OFF">OFF</label>
+                        <label><input type="radio" name="forward" value="1">ON</label>
+                        <label><input type="radio" name="forward" value="0">OFF</label>
                     </div>
                     <div>
                         <label for="remarks">備考</label>
