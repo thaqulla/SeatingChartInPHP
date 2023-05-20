@@ -37,7 +37,7 @@
                     <form action="{{ route('seats.destroy', $seat) }}" method="post">
                         @csrf
                         @method('delete')                                        
-                        <button type="submit">削除</button>
+                        <button type="submit" class="btn btn-outline-danger">削除</button>
                     </form>
                 </div>                 
             </div>
