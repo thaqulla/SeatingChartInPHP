@@ -16,6 +16,19 @@ class SeatController extends Controller
         
         return view('seats.index',compact('seats'));
     }
+    public function makeSeatingChart(Request $request, Seat $seat) {        
+
+        $selectedAlphabet = $request->input('alphabet');
+        // 選択されたコースと一致するレコードを取得
+        $seats = Seat::
+            orderBy('ruby','asc')
+            ->select('studentId','name','ruby','newStudent','forward')
+            ->where('courceNow', $selectedAlphabet)
+            ->get();
+        
+        
+        return view('seats.seatingChart',compact('seats'));//
+    }
     // 作成ページ
     public function create() {
         return view('seats.create');

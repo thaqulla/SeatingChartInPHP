@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
  // ルーティングを設定するコントローラを宣言する
- use App\Http\Controllers\SeatController;
+use App\Http\Controllers\SeatController;
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,13 +14,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/', [SeatController::class, 'index']);
-
+Route::get('/home', [SeatController::class, 'index']);
+Route::get('/seatingChart', [SeatController::class, 'makeSeatingChart']);
 // // 投稿の一覧ページ
 // Route::get('/seats', [SeatController::class, 'index'])->name('seats.index');
 // // 投稿の作成ページ
@@ -38,3 +38,4 @@ Route::get('/', [SeatController::class, 'index']);
 Route::get('/seats/csv-download',[SeatController::class, 'downloadcsv'])->name('csvDownload');
 
 Route::resource('seats', SeatController::class);
+

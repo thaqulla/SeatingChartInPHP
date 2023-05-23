@@ -1,0 +1,50 @@
+.row {
+  display: flex;
+  background-color: green;
+}
+.aside_container {
+  flex: 1;
+  
+}
+.drop_container {
+  flex: 3;
+  background-color: violet;
+  width: 100px;
+  height: 100px;
+}
+.main_container {
+  flex: 1;
+  display: flex;
+  background-color: blue;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: center;
+}
+.item {
+  background-color: red;
+  margin: 10px;
+}
+
+.grid_container {
+  display: grid;
+  background-color: aqua;
+  grid-template-columns: 5% 30% 65% ; /* 4つの列を等分割 repeat(4, 1fr);*/
+  gap: 1px; /* 列の間隔 */
+}
+
+.grid_item {
+  display: flex;
+  margin: 1px;
+  background-color: yellow;
+  justify-content: space-between;
+}
+
+.drag-item {
+  width: 120px;
+  height: 60px;
+  background-color: #ccc;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  cursor: move;
+}
