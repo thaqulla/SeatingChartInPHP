@@ -10,11 +10,11 @@
     </form>
     @foreach($seats as $seat)
     <div class="grid_container">
-    @if ($seat->newStudent == 0)
-      <div class="grid_item">新</div>
-    @else
-      <div class="grid_item">　</div>
-    @endif
+      @if ($seat->newStudent == 0)
+        <div class="grid_item">新</div>
+      @else
+        <div class="grid_item">&nbsp;</div>
+      @endif
       <div class="grid_item">{{ $seat->studentId }}</div>
       <div class="grid_item">{{ $seat->name }}</div>
     </div>

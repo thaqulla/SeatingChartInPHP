@@ -5,15 +5,68 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 // やりとりするモデルを宣言する
 use App\Models\Seat;
+use App\Models\Score;
 // 大規模ファイルのダウンロードに使用
 use Symfony\Component\HttpFoundation\StreamedResponse;
+// バリデーションを行う
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+// phpMyAdmin上のカラム名の取得
+use Illuminate\Support\Facades\Schema;
+// graph
+$JpGraph = base_path('vendor/jpgraph/src/');
+require_once $JpGraph . 'jpgraph.php'; 
+require_once $JpGraph . 'jpgraph_line.php';
 
+// class HomeController extends Controller
+// {
+//     /**
+//      * Create a new controller instance.
+//      *
+//      * @return void
+//      */
+//     public function __construct()
+//     {
+//         $this->middleware('auth');
+//     }
 
+//     /**
+//      * Show the application dashboard.
+//      *
+//      * @return \Illuminate\Contracts\Support\Renderable
+//      */
+//     public function index()
+//     {
+//         return view('home');
+//     }
+// }
 class SeatController extends Controller
 {
-    public function index() {        
-        $seats = Seat::latest()->get();
-        
+    public function index(Request $request) {        
+        $request->validate([
+            'studentId' => '',//required
+            'name' => '',
+            'ruby' => '',
+        ]);
+
+        $selectedStudentId = $request->input('studentId');
+        $selectedName= $request->input('name');
+        $selectedRuby = $request->input('ruby');
+
+        $seats = Seat::orderBy('ruby','asc')->get();
+        if ($selectedStudentId || $selectedName || $selectedRuby) {
+            $seats = Seat::
+            orderBy('ruby','asc')
+            ->where('studentId','=', $selectedStudentId)
+            ->orWhere('name' ,$selectedName)
+            ->orWhere('ruby' ,$selectedRuby)
+            ->get();
+
+            $columns = Schema::getColumnListing('seat');
+        }
+        else {
+            $seats = Seat::orderBy('ruby','asc')->get();
+        }
         return view('seats.index',compact('seats'));
     }
     public function makeSeatingChart(Request $request, Seat $seat) {        
@@ -28,6 +81,35 @@ class SeatController extends Controller
         
         
         return view('seats.seatingChart',compact('seats'));//
+    }
+
+    public function search(Seat $seat) {     
+
+        return view('seats.search', compact('seat'));
+    }
+    public function resultData(Request $request, Seat $seat) {        
+
+        $selectedAlphabet = $request->input('search');
+
+        // 入力のバリデーションを行う
+        // $validator = Validator::make($request->all(), [
+        //     'search' => [
+        //         'required',
+        //         'string',
+        //         Rule::where(function ($query) use ($search) {
+        //             $query->where('studentId', '=', $search)
+        //                   ->orWhere('studentId', '=', mb_convert_kana($search, 'n'));
+        //         })
+        //     ],
+        // ]);
+
+        // 選択されたコースと一致するレコードを取得
+        $result = Seat::
+            where('ruby', 'like', "%", $search, "%")
+            ->orWhere('studentId', '=', $search)
+            ->get();
+        
+        return view('seats.show', compact('result'));
     }
     // 作成ページ
     public function create() {
@@ -69,7 +151,6 @@ class SeatController extends Controller
 
         return $response;
     }
-
     // 作成機能
     public function store(Request $request) {
         $request->validate([
@@ -97,8 +178,72 @@ class SeatController extends Controller
         return redirect()->route('seats.index')->with('flash_message', '更新が完了しました。');
     }
     // 詳細ページ
-    public function show(Seat $seat) {
-        return view('seats.show', compact('seat'));
+    public function show(Seat $seat, Score $score) {
+
+        $privateScores = Score::
+            orderBy('created_at','asc')
+            ->where('student_id', $seat->studentId)
+            ->get();
+
+        // データ準備
+        $testNames = [];
+        $fourScores = [];
+        $mathScores = [];
+        $JapaneseScores = [];
+        $scienceScores = [];
+        $societyScores = [];
+
+        foreach ($privateScores as $score) {
+            $testNames[] = $score->testName;
+            $fourScores[] = $score->fourScore;
+            $mathScores[] = $score->mathScore;
+            $JapaneseScores[] = $score->JapaneseScore;
+            $scienceScores[] = $score->scienceScore;
+            $societyScores[] = $score->societyScore;
+        }
+        // グラフ生成前にフォントのパスを指定
+        //ipam.ttf、ipamp.ttf、ipag.ttf、ipagp.ttf
+        //FF_MINCHO、FF_PMINCHO、FF_GOTHIC、FF_PGOTHICと設定されます。
+        putenv('GDFONTPATH=' . resource_path('fonts'));
+
+        // グラフ生成
+        $chartWidth = 800;
+        $chartHeight = 400;
+        $graph = new \Graph($chartWidth, $chartHeight);
+
+        $graph->SetScale("textlin");
+        $graph->SetMargin(50, 30, 20, 50);
+        $graph->title->Set("Scores");
+        // $graph->title->SetFont(FF_MINCHO);
+        $graph->title->SetFont(FF_FONT1, FS_BOLD);
+        $graph->xaxis->SetTickLabels($testNames);
+        $graph->yaxis->scale->SetAutoMin(0);
+        $graph->yaxis->scale->SetAutoMax(100);
+
+
+        $data = [
+            $fourScores,
+            $mathScores,
+            $JapaneseScores,
+            $scienceScores,
+            $societyScores
+        ];
+        
+        // $colors = ["blue", "green", "red", "orange", "black"];
+        $subject = ["四科","算数","国語","理科","社会"];
+        // $colors = ["#1374e9", "#1c9440", "#e4382a", "#fbc20f", "#202124"];
+        $colors = [0, 1, 2, 3, 4];
+        foreach ($data as $i => $scores) {
+            $lineplot = new \LinePlot($scores);
+            $lineplot->SetLegend($subject[$i]);
+            $graph->legend->SetFont(FF_MINCHO, FS_NORMAL, 14);
+            $lineplot->SetColor($colors[$i]);
+            $graph->Add($lineplot);
+        }
+        // グラフの出力
+        $graph->Stroke(public_path('charts/chart.png'));
+
+        return view('seats.show', compact('seat','privateScores'));
     }
     // 更新ページ
     public function edit(Seat $seat) {
@@ -107,23 +252,23 @@ class SeatController extends Controller
     // 更新機能
     public function update(Request $request, Seat $seat) {
         $request->validate([
-            'studentId' => 'required',
+            // 'studentId' => 'required',
             'name' => 'required',
             'ruby' => 'required',
-            'courceOld' => 'required',
-            'courceNow' => 'required',
-            'newStudent' => 'required',
-            'forward' => 'required',
+            // 'courceOld' => 'required',
+            // 'courceNow' => 'required',
+            // 'newStudent' => 'required',
+            // 'forward' => 'required',
             'remarks' => 'required',
         ]);
 
-        $seat->studentId = $request->input('studentId');
+        // $seat->studentId = $request->input('studentId');
         $seat->name = $request->input('name');
         $seat->ruby = $request->input('ruby');
-        $seat->courceOld = $request->input('courceOld');
-        $seat->courceNow = $request->input('courceNow');
-        $seat->newStudent = boolval($request->input('newStudent'));
-        $seat->forward = boolval($request->input('forward'));
+        // $seat->courceOld = $request->input('courceOld');
+        // $seat->courceNow = $request->input('courceNow');
+        // $seat->newStudent = boolval($request->input('newStudent'));
+        // $seat->forward = boolval($request->input('forward'));
         $seat->remarks = $request->input('remarks');
         $seat->save();
 

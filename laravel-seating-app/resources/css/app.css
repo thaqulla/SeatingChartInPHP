@@ -1,7 +1,22 @@
 .row {
   display: flex;
-  background-color: green;
+  /* background-color: green; */
 }
+
+.index_container {
+  display: grid;
+  background-color: green;
+  grid-template-columns: 8fr 2fr;
+}
+
+.index_item {
+  /* display: flex; */
+  /* margin: 1px;
+  padding: 1px; */
+  background-color: #6ccb5f;
+  /* justify-content: space-between; */
+}
+
 .aside_container {
   flex: 1;
   
@@ -47,4 +62,57 @@
   padding: 10px;
   text-align: center;
   cursor: move;
+}
+
+.student_container {
+  display: grid;
+  background-color: #000;
+  grid-template-columns: 1.1fr 3fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; /* 4つの列を等分割 repeat(4, 1fr);*/
+  gap: 1px; /* 列の間隔 */
+}
+
+.student_item {
+  display: flex;
+  margin: 1px;
+  padding: 1px;
+  background-color: #fff;
+  justify-content: space-between;
+  align-items: center; /* 上下中央揃え */
+}
+.item_center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.box_size {
+  text-align: center;
+  width: 90%;
+}
+/* .sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+} */
+
+.score_container {
+  display: grid;
+  background-color: #000;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 4つの列を等分割 repeat(4, 1fr);*/
+  gap: 1px; /* 列の間隔 */
+}
+
+.show_container {
+  display: grid;
+  background-color: green;
+  grid-template-columns: 2fr 3fr;
+}
+
+.show_item {
+  /* display: flex; */
+  margin: 1px;
+  padding: 1px;
+  background-color: #6ccb5f;
+  /* justify-content: space-between; */
 }

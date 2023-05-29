@@ -16,10 +16,14 @@ use App\Http\Controllers\HomeController;
 */
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');//App\Http\Controllers\HomeController
 
 Route::get('/home', [SeatController::class, 'index']);
 Route::get('/seatingChart', [SeatController::class, 'makeSeatingChart']);
+Route::get('/search', [SeatController::class, 'search']);
+// Route::get('/search', [SeatController::class, 'search']);
+
+
 // // 投稿の一覧ページ
 // Route::get('/seats', [SeatController::class, 'index'])->name('seats.index');
 // // 投稿の作成ページ

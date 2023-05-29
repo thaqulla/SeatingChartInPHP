@@ -195,6 +195,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // JpGraph日本語化用のプロバイダー
+        // App\Providers\FontServiceProvider::class,
+
     ],
 
     /*

@@ -23,8 +23,12 @@
                     @csrf
                     @method('patch')
                     <div>
-                        <label for="name">氏名</label>
+                        <label for="name">氏名(漢字)</label>
                         <input type="text" name="name" value="{{ old('name', $seat->name) }}">
+                    </div>
+                    <div>
+                        <label for="ruby">氏名(カナ)</label>
+                        <input type="text" name="ruby" value="{{ old('ruby', $seat->ruby) }}">
                     </div>
                     <div>
                         <label for="remarks">備考</label>

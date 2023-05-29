@@ -21,8 +21,8 @@ return new class extends Migration
             $table->float('fourDeviation');
             $table->integer('mathScore');
             $table->float('mathDeviation');
-            $table->integer('japaneseScore');
-            $table->float('japaneseDeviation');
+            $table->integer('JapaneseScore');
+            $table->float('JapaneseDeviation');
             $table->integer('scienceScore');
             $table->float('scienceDeviation');
             $table->integer('societyScore');
