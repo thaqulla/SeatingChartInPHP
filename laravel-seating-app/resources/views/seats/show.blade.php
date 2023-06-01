@@ -1,7 +1,35 @@
 @include('layouts.header')
+
     <main class="show_container">
-        <!-- 点数表 -->
         <aside>
+        <div>{{ $seat->studentId }}</div>
+        <div>{{ $seat->name }}</div>{{ $seat->courceOld }}{{ $seat->courceNow }}
+        <div>{{ $seat->ruby }}</div>{{ $seat->newStudent }}{{ $seat->forward }}{{ $seat->remarks }}
+
+
+        <h2>四科成績表</h2>
+        <!-- 偏差値表 -->
+            <div class="score_container">
+                <div class="student_item item_center">テスト名</div>
+                <div class="student_item item_center">四科偏差値</div>
+                <div class="student_item item_center">算数偏差値</div>
+                <div class="student_item item_center">国語偏差値</div>
+                <div class="student_item item_center">理科偏差値</div>
+                <div class="student_item item_center">社会偏差値</div>
+            </div>
+        @foreach ($privateScores as $score)
+            <div class="score_container">
+                <div class="student_item item_center">{{ $score->testName }}</div>
+                <div class="student_item item_center">{{ $score->fourDeviation }}</div>
+                <div class="student_item item_center">{{ $score->mathDeviation }}</div>
+                <div class="student_item item_center">{{ $score->JapaneseDeviation }}</div>
+                <div class="student_item item_center">{{ $score->scienceDeviation }}</div>
+                <div class="student_item item_center">{{ $score->societyDeviation }}</div>
+            </div>
+        @endforeach   
+        <br>
+        <!-- 点数表 -->
+            
             <div class="score_container">
                 <div class="student_item item_center">テスト名</div>
                 <div class="student_item item_center">四科合計点</div>
@@ -20,44 +48,30 @@
                 <div class="student_item item_center">{{ $score->societyScore }}</div>
             </div>
         @endforeach        
-        </aside>
-        <!-- 偏差値表 -->
-        <aside>
-            <div class="score_container">
-                <div class="student_item item_center">テスト名</div>
-                <div class="student_item item_center">四科偏差値</div>
-                <div class="student_item item_center">算数偏差値</div>
-                <div class="student_item item_center">国語偏差値</div>
-                <div class="student_item item_center">理科偏差値</div>
-                <div class="student_item item_center">社会偏差値</div>
-            </div>
-        @foreach ($privateScores as $score)
-            <div class="score_container">
-                <div class="student_item item_center">{{ $score->testName }}</div>
-                <div class="student_item item_center">{{ $score->fourDeviation }}</div>
-                <div class="student_item item_center">{{ $score->mathDeviation }}</div>
-                <div class="student_item item_center">{{ $score->JapaneseDeviation }}</div>
-                <div class="student_item item_center">{{ $score->scienceDeviation }}</div>
-                <div class="student_item item_center">{{ $score->societyDeviation }}</div>
-            </div>
-        @endforeach        
+        <!-- </aside> -->
+        
+        
+        <!-- <aside> -->
+             
         </aside>
         <article>
             <div>                
-                <h1>生徒情報詳細</h1>  
+                <h2>生徒情報詳細</h2>  
                 @if (session('flash_message'))
                   <div>{{ session('flash_message') }}</div>
                 @endif
 
                 <div>    
                     <a href="{{ route('seats.index') }}">&lt; 戻る</a> 
-                    <img src="{{ asset('charts/chart.png') }}" alt="Graph">                            
+                                                
                 </div>
 
                 <div>
-                    <div>{{ $seat->studentId }}</div>
-                    <div>{{ $seat->name }}{{ $seat->ruby }}{{ $seat->courceOld }}{{ $seat->courceNow }}</div>
-                    <div>{{ $seat->newStudent }}{{ $seat->forward }}{{ $seat->remarks }}</div>
+                    <div>
+                        <img src="{{ asset('charts/chart2.png') }}" alt="Graph">
+                    </div>
+                    <div></div>
+                    <div></div>
                     <a href="{{ route('seats.edit', $seat) }}" class="btn btn-outline-primary">編集</a>
                     <form action="{{ route('seats.destroy', $seat) }}" method="post">
                         @csrf

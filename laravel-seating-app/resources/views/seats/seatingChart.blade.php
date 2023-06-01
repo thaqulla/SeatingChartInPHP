@@ -32,7 +32,9 @@
   </div>
   
   <div class="drop_container" id="dropzone" ondragover="allowDrop(event)" ondrop="drop(event)">
-
+  <button class="print-btn">
+<span>結果だけを印刷する</span>
+</button>
   </div>
 </div>
 @include('layouts.footer')

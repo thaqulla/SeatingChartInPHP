@@ -17,3 +17,4 @@ yarn-error.log
 /.idea
 /.vscode
 /old
+/public/charts/*.png?t=*

@@ -187,61 +187,78 @@ class SeatController extends Controller
 
         // データ準備
         $testNames = [];
-        $fourScores = [];
-        $mathScores = [];
-        $JapaneseScores = [];
-        $scienceScores = [];
-        $societyScores = [];
+        $fourDeviations = [];
+        $mathDeviations = [];
+        $JapaneseDeviations = [];
+        $scienceDeviations = [];
+        $societyDeviations = [];
 
         foreach ($privateScores as $score) {
             $testNames[] = $score->testName;
-            $fourScores[] = $score->fourScore;
-            $mathScores[] = $score->mathScore;
-            $JapaneseScores[] = $score->JapaneseScore;
-            $scienceScores[] = $score->scienceScore;
-            $societyScores[] = $score->societyScore;
+            $fourDeviations[] = $score->fourDeviation;
+            $mathDeviations[] = $score->mathDeviation;
+            $JapaneseDeviations[] = $score->JapaneseDeviation;
+            $scienceDeviations[] = $score->scienceDeviation;
+            $societyDeviations[] = $score->societyDeviation;
         }
+
+        $maxs = [max($fourDeviations),
+                max($mathDeviations),
+                max($JapaneseDeviations),
+                max($scienceDeviations),
+                max($societyDeviations)];
+
+        $mins = [min($fourDeviations),
+                min($mathDeviations),
+                min($JapaneseDeviations),
+                min($scienceDeviations),
+                min($societyDeviations)];
+
         // グラフ生成前にフォントのパスを指定
-        //ipam.ttf、ipamp.ttf、ipag.ttf、ipagp.ttf
-        //FF_MINCHO、FF_PMINCHO、FF_GOTHIC、FF_PGOTHICと設定されます。
+        // ipam.ttf、ipamp.ttf、ipag.ttf、ipagp.ttf
+        // FF_MINCHO、FF_PMINCHO、FF_GOTHIC、FF_PGOTHICの順で設定
         putenv('GDFONTPATH=' . resource_path('fonts'));
 
         // グラフ生成
         $chartWidth = 800;
-        $chartHeight = 400;
+        $chartHeight = 500;
         $graph = new \Graph($chartWidth, $chartHeight);
 
         $graph->SetScale("textlin");
         $graph->SetMargin(50, 30, 20, 50);
-        $graph->title->Set("Scores");
-        // $graph->title->SetFont(FF_MINCHO);
-        $graph->title->SetFont(FF_FONT1, FS_BOLD);
+        $graph->title->Set("偏差値推移");
+        $graph->title->SetFont(FF_MINCHO, FS_NORMAL, 14);
+        // $graph->title->SetFont(FF_FONT1, FS_BOLD);
         $graph->xaxis->SetTickLabels($testNames);
-        $graph->yaxis->scale->SetAutoMin(0);
-        $graph->yaxis->scale->SetAutoMax(100);
+        $graph->yaxis->scale->SetAutoMin($mins);
+        $graph->yaxis->scale->SetAutoMax($maxs);
 
 
         $data = [
-            $fourScores,
-            $mathScores,
-            $JapaneseScores,
-            $scienceScores,
-            $societyScores
+            $fourDeviations,
+            $mathDeviations,
+            $JapaneseDeviations,
+            $scienceDeviations,
+            $societyDeviations
         ];
         
-        // $colors = ["blue", "green", "red", "orange", "black"];
+        $colors = ["blue", "green", "red", "orange", "black"];
         $subject = ["四科","算数","国語","理科","社会"];
         // $colors = ["#1374e9", "#1c9440", "#e4382a", "#fbc20f", "#202124"];
-        $colors = [0, 1, 2, 3, 4];
+        // $colors = [0, 1, 2, 3, 4];
         foreach ($data as $i => $scores) {
             $lineplot = new \LinePlot($scores);
             $lineplot->SetLegend($subject[$i]);
             $graph->legend->SetFont(FF_MINCHO, FS_NORMAL, 14);
             $lineplot->SetColor($colors[$i]);
+            // マーカーの設定
+            $lineplot->mark->SetType(MARK_UTRIANGLE); // マーカーの種類を設定
+            $lineplot->mark->SetFillColor($colors[$i]); // マーカーの塗りつぶし色を設定
+            $lineplot->mark->SetSize(4); // マーカーのサイズを設定
             $graph->Add($lineplot);
         }
         // グラフの出力
-        $graph->Stroke(public_path('charts/chart.png'));
+        $graph->Stroke(public_path('charts/chart2.png'));// . '?t=' . time()
 
         return view('seats.show', compact('seat','privateScores'));
     }

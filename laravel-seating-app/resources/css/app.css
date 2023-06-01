@@ -116,3 +116,7 @@
   background-color: #6ccb5f;
   /* justify-content: space-between; */
 }
+
+.print-off {
+  display: none;
+}

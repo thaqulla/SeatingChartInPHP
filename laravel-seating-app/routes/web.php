@@ -19,8 +19,7 @@ Auth::routes();
 Route::get('/', [HomeController::class, 'index'])->name('home');//App\Http\Controllers\HomeController
 
 Route::get('/home', [SeatController::class, 'index']);
-Route::get('/seatingChart', [SeatController::class, 'makeSeatingChart']);
-Route::get('/search', [SeatController::class, 'search']);
+Route::get('/seatingChart', [SeatController::class, 'makeSeatingChart'])->name('seats.seatingChart');
 // Route::get('/search', [SeatController::class, 'search']);
 
 
