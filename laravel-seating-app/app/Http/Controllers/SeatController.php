@@ -18,31 +18,9 @@ $JpGraph = base_path('vendor/jpgraph/src/');
 require_once $JpGraph . 'jpgraph.php'; 
 require_once $JpGraph . 'jpgraph_line.php';
 
-// class HomeController extends Controller
-// {
-//     /**
-//      * Create a new controller instance.
-//      *
-//      * @return void
-//      */
-//     public function __construct()
-//     {
-//         $this->middleware('auth');
-//     }
-
-//     /**
-//      * Show the application dashboard.
-//      *
-//      * @return \Illuminate\Contracts\Support\Renderable
-//      */
-//     public function index()
-//     {
-//         return view('home');
-//     }
-// }
 class SeatController extends Controller
 {
-    public function index(Request $request) {        
+    public function index(Request $request) {            
         $request->validate([
             'studentId' => '',//required
             'name' => '',
@@ -69,7 +47,7 @@ class SeatController extends Controller
         }
         return view('seats.index',compact('seats'));
     }
-    public function makeSeatingChart(Request $request, Seat $seat) {        
+    public function report(Request $request, Seat $seat) {        
 
         $selectedAlphabet = $request->input('alphabet');
         // 選択されたコースと一致するレコードを取得
@@ -79,8 +57,16 @@ class SeatController extends Controller
             ->where('courceNow', $selectedAlphabet)
             ->get();
         
+        $cources = Seat::
+            select('courceNow')
+            ->orderBy('courceNow','asc')
+            ->distinct() //重複除外
+            ->get()
+            ->pluck('courceNow') //値のみ取得
+            ->toArray();
         
-        return view('seats.seatingChart',compact('seats'));//
+        return view('seats.report',compact('seats', 'cources'));
+
     }
 
     public function search(Seat $seat) {     
@@ -113,6 +99,13 @@ class SeatController extends Controller
     }
     // 作成ページ
     public function create() {
+    // $studentNumber = $request->input('student_number');
+
+    // $existingStudent = Student::where('student_number', $studentNumber)->first();
+
+    // if ($existingStudent) {
+    //     return back()->with('error', '登録されていますよ');
+    // }
         return view('seats.create');
     }
     //csvダウンロード機能
@@ -180,6 +173,22 @@ class SeatController extends Controller
     // 詳細ページ
     public function show(Seat $seat, Score $score) {
 
+        function getMin($number) {
+            if ($number % 10 === 0) {
+                return $number - 10;
+            } else {
+                return floor($number / 10) * 10;
+            }
+        }
+
+        function getMax($number) {
+            if ($number % 10 === 0) {
+                return $number + 10;
+            } else {
+                return ceil($number / 10) * 10;
+            }
+        }
+
         $privateScores = Score::
             orderBy('created_at','asc')
             ->where('student_id', $seat->studentId)
@@ -220,8 +229,8 @@ class SeatController extends Controller
         putenv('GDFONTPATH=' . resource_path('fonts'));
 
         // グラフ生成
-        $chartWidth = 800;
-        $chartHeight = 500;
+        $chartWidth = 700;
+        $chartHeight = 400;
         $graph = new \Graph($chartWidth, $chartHeight);
 
         $graph->SetScale("textlin");
@@ -230,8 +239,8 @@ class SeatController extends Controller
         $graph->title->SetFont(FF_MINCHO, FS_NORMAL, 14);
         // $graph->title->SetFont(FF_FONT1, FS_BOLD);
         $graph->xaxis->SetTickLabels($testNames);
-        $graph->yaxis->scale->SetAutoMin($mins);
-        $graph->yaxis->scale->SetAutoMax($maxs);
+        $graph->yaxis->scale->SetAutoMin(getMin(min($mins)));
+        $graph->yaxis->scale->SetAutoMax(getMax(max($maxs)));
 
 
         $data = [
@@ -258,7 +267,7 @@ class SeatController extends Controller
             $graph->Add($lineplot);
         }
         // グラフの出力
-        $graph->Stroke(public_path('charts/chart2.png'));// . '?t=' . time()
+        $graph->Stroke(public_path('charts/chart2.png'));
 
         return view('seats.show', compact('seat','privateScores'));
     }

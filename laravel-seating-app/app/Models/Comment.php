@@ -5,10 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Score extends Model
+class Comment extends Model
 {
     use HasFactory;
+
     public function user () {
         return $this->belongTo(User::class);
+    }
+    public function seat () {
+        return $this->belongTo(Seat::class);
     }
 }

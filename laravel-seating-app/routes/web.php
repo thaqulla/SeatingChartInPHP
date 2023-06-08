@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
  // ルーティングを設定するコントローラを宣言する
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CommentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,12 +15,16 @@ use App\Http\Controllers\HomeController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/', [CommentController::class, 'index'])->middleware('auth');
 Auth::routes();
 
-Route::get('/', [HomeController::class, 'index'])->name('home');//App\Http\Controllers\HomeController
+Route::get('/home', [HomeController::class, 'index'])->name('home');//App\Http\Controllers\HomeController
 
-Route::get('/home', [SeatController::class, 'index']);
-Route::get('/seatingChart', [SeatController::class, 'makeSeatingChart'])->name('seats.seatingChart');
+// Route::get('/home', [SeatController::class, 'index'])->name('seats.index');
+Route::get('/report', [SeatController::class, 'report'])->name('seats.report');
+// Route::get('/report', [SeatController::class, 'report'])->name('seats.report');
+// Route::get('/report', [SeatController::class, 'report'])->name('seats.report');
 // Route::get('/search', [SeatController::class, 'search']);
 
 
@@ -41,4 +46,4 @@ Route::get('/seatingChart', [SeatController::class, 'makeSeatingChart'])->name('
 Route::get('/seats/csv-download',[SeatController::class, 'downloadcsv'])->name('csvDownload');
 
 Route::resource('seats', SeatController::class);
-
+Route::resource('comments', CommentController::class);
