@@ -7,39 +7,20 @@ import '../css/app.css';
 // document.addEventListener('DOMContentLoaded', function() {
 //   const form = document.getElementById('alphabetForm');
 //   const radioButtons = form.querySelectorAll('input[type="radio"]');
+//   const selectionDisplay = document.getElementById('selectionDisplay');
+  
+//   // ページ初期表示時に選択したオプションを表示するための処理
+//   const selectedOption = form.querySelector('input[name="alphabet"]:checked').value;
+//   selectionDisplay.textContent = `選択したオプション：${selectedOption}`;
   
 //   radioButtons.forEach(function(radioButton) {
 //     radioButton.addEventListener('change', function() {
-//       // ラジオボタンが変更された際にフォームの送信を行わず、選択状態を保持するための処理を行います
-//       form.submit();
+//       // ラジオボタンが変更された際に選択したオプションを表示する処理を行います
+//       const selectedOption = form.querySelector('input[name="alphabet"]:checked').value;
+//       selectionDisplay.textContent = `選択したオプション：${selectedOption}`;
 //     });
 //   });
 // });
-
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('alphabetForm');
-  const radioButtons = form.querySelectorAll('input[type="radio"]');
-  const selectionDisplay = document.getElementById('selectionDisplay');
-  
-  // ページ初期表示時に選択したオプションを表示するための処理
-  const selectedOption = form.querySelector('input[name="alphabet"]:checked').value;
-  selectionDisplay.textContent = `選択したオプション：${selectedOption}`;
-  
-  radioButtons.forEach(function(radioButton) {
-    radioButton.addEventListener('change', function() {
-      // ラジオボタンが変更された際に選択したオプションを表示する処理を行います
-      const selectedOption = form.querySelector('input[name="alphabet"]:checked').value;
-      selectionDisplay.textContent = `選択したオプション：${selectedOption}`;
-    });
-  });
-});
-
-
-
-
-
-
-
 
 function allowDrop(event) {
   event.preventDefault();

@@ -112,7 +112,7 @@
 
 .drag-item {
   width: 120px;
-  height: 60px;
+  height: 100px;
   background-color: #ccc;
   margin: 10px;
   padding: 10px;
@@ -152,16 +152,27 @@
   background-color: #000;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 4つの列を等分割 repeat(4, 1fr);*/
   gap: 1px; /* 列の間隔 */
-  width: 95%;
+  width: 700px;
   margin: 0 20px ;
-  
+  /* text-align: center; */
 }
 
 .show_container {
   display: grid;
   /* background-color: green; */
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 2fr 3fr;
 }
+
+.show_detail_container {
+  display: grid;
+  /* background-color: green; */
+  grid-template-columns: 1fr 0.1fr 5fr;
+}
+
+.show_detail_container span {
+  border: 1px solid #000;
+}
+
 
 .show_item {
   margin: 1px;
@@ -176,6 +187,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  text-align: center;
 }
 
 .show_graph {
@@ -282,6 +294,45 @@ textarea.edit_item {
   margin-bottom: 10px;
 }
 
+.report_main_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.report_container {
+  margin: 15px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 60vw;
+  border: #6ccb5f solid ;
+  border-radius: 10px;
+  justify-content: space-around;
+  /* background-color: green; */
+  /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr; */
+}
+
+.comment_controller {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.report_item {
+  margin: 5px;
+  width: 120px;
+  height: 100px;
+  /* padding: 10px; */
+  /* background-color: #ebebeb;
+  border: #6ccb5f solid ;
+  border-radius: 10px; */
+  text-align: center;
+}
+
+.report_textarea {
+  /* margin: 20px; */
+  max-width: 48vw;
+}
 
 /* media queries */
 @media (max-width: 700px) {
@@ -296,3 +347,23 @@ textarea.edit_item {
   padding-top:10px;
   }   */
 }
+/* CSS */
+.password-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #d7d7d7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.password-popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+

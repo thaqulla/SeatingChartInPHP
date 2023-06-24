@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Seat extends Model
 {
     use HasFactory;
+    // public function comments() {
+    //     return $this->hasMany(Comment::class);
+    // }
+
     public function comments() {
-        return $this->hasMany(Comment::class);
+        return  $this->belongsToMany(Comment::class)->withTimestamps();
     }
 }

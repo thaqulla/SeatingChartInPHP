@@ -4,6 +4,10 @@
     <div class="index_container">
         <!-- 生徒一覧 -->
         <article class="index_item">
+            <!-- バックエンドからの結果を表示 -->
+            @if (session('deleteStatus'))
+                <p>{{ session('deleteStatus') }}</p>
+            @endif
             <h2 class="index_head">登録一覧</h2>
             <div style="margin: 10px;">
                 <!-- カラム名 -->
@@ -69,6 +73,8 @@
                             @csrf
                             @method('delete')                                        
                             <button type="submit" class="btn btn-outline-danger">削除</button>
+                            <!-- パスワード入力ボタン -->
+                            <button onclick="openPasswordPopup()">削除</button>
                         </form>
                     </div>
                 
@@ -76,11 +82,10 @@
                     <div class="student_item item_center"> 
                         <form action="#" method="post">
                             @csrf
-                            @method('delete')                                        
+                            @method('delete')                             
                             <button type="submit" class="disabled btn btn-outline-danger">削除</button>
                         </form>
                     </div>
-                    <!-- </div> -->
                 @endif
                 </div>
 
@@ -98,7 +103,7 @@
                 <a href="{{ route('csvDownload') }}" class="btn btn-primary">CSVでダウンロード</a>                              
             </div>
             <h2 class="index_head">絞り込み検索</h2>
-            <form>
+            <form action="{{ route('seats.index') }}" method="get">
                 <div class="text-center">
                     <div class="box_size d-inline-block">
                         <input class="form-control me-2" type="search" name="studentId"
@@ -118,6 +123,91 @@
                 </div>
                 <button class="btn btn-outline-success" type="submit" style="float: right;">検索</button>
             </form>
+
+            
+
+        <!-- パスワード入力ボタン -->
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#passwordModal">
+        削除
+        </button>
+
+        <!-- パスワード入力用モーダル -->
+        <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordModalLabel">パスワード入力</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="password" id="passwordInput" class="form-control" placeholder="パスワードを入力してください">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" onclick="checkPassword()">確認</button>
+            </div>
+            </div>
+        </div>
+        </div>
+        <!-- パスワード入力用ポップアップ -->
+        <!-- <div id="passwordPopup" class="password-popup">
+            <div class="password-popup-content">
+                <h3>パスワード入力</h3>
+                <input type="password" id="passwordInput" placeholder="パスワードを入力してください">
+                <button onclick="checkPassword()">確認</button>
+            </div>
+        </div> -->
+
+        <!-- JavaScript -->
+        <script>
+            function checkPassword() {
+                var password = document.getElementById('passwordInput').value;
+                var correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
+
+                if (password === correctPassword) {
+                // パスワードが正しい場合の処理（削除操作など）
+                // ここに削除処理の実装を追加する
+
+                // モーダルを閉じる
+                $('#passwordModal').modal('hide');
+                } else {
+                alert('パスワードが間違っています。');
+                }
+            }
+            
+            // モーダルが閉じられた後に入力フィールドをリセットする
+            $('#passwordModal').on('hidden.bs.modal', function () {
+                document.getElementById('passwordInput').value = '';
+            });
+
+            function openPasswordPopup() {
+                var passwordPopup = document.getElementById('passwordPopup');
+                passwordPopup.style.display = 'flex';
+            }
+
+            function checkPassword() {
+                var password = document.getElementById('passwordInput').value;
+                var correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
+
+                if (password === correctPassword) {
+                    // パスワードが正しい場合の処理（削除操作など）
+                    // ここに削除処理の実装を追加する
+
+                    // ポップアップを閉じる
+                    closePasswordPopup();
+                } else {
+                    alert('パスワードが間違っています。');
+                    closePasswordPopup();
+                }
+            }
+
+            function closePasswordPopup() {
+                var passwordPopup = document.getElementById('passwordPopup');
+                passwordPopup.style.display = 'none';
+            }
+        </script>
         </aside>
     </div>          
 @endsection

@@ -8,26 +8,30 @@
         <div class="edit_head">
             <h2>{{ __('Login') }}</h2>
         </div>
+
+
+
         <label for="email" class="edit_label">{{ __('Email Address') }}</label>
-        <input id="email" type="email"
-            class="edit_item @error('email') is-invalid @enderror"
-            name="email" value="{{ old('email') }}"
-            required autocomplete="email" autofocus><!--form-control -->
+        <input id="email" type="email" class="edit_item @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus><!--form-control -->
         @error('email')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
         @enderror
 
         <label for="password" class="edit_label">{{ __('Password') }}</label>
-        <input id="password" type="password"
-            class="edit_item @error('password') is-invalid @enderror"
-            name="password" required autocomplete="current-password">
+        <input id="password" type="password" class="edit_item @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
         @error('password')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
         @enderror
+        <!-- @if($errors->has('email') || $errors->has('password'))
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $errors->first('email') ?: $errors->first('password') }}</strong>
+            </span>
+        @endif -->
+
 
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>

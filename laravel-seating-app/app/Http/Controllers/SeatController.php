@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 // やりとりするモデルを宣言する
 use App\Models\Seat;
 use App\Models\Score;
+use App\Models\Comment;
 // 大規模ファイルのダウンロードに使用
 use Symfony\Component\HttpFoundation\StreamedResponse;
 // バリデーションを行う
@@ -18,26 +20,41 @@ $JpGraph = base_path('vendor/jpgraph/src/');
 require_once $JpGraph . 'jpgraph.php'; 
 require_once $JpGraph . 'jpgraph_line.php';
 
+
 class SeatController extends Controller
 {
     public function index(Request $request) {            
-        $request->validate([
-            'studentId' => '',//required
-            'name' => '',
-            'ruby' => '',
-        ]);
+        // $request->validate([
+        //     'studentId' => '',//required
+        //     // 'name' => '',
+        //     // 'ruby' => '',
+        // ]);
 
         $selectedStudentId = $request->input('studentId');
         $selectedName= $request->input('name');
         $selectedRuby = $request->input('ruby');
-
-        $seats = Seat::orderBy('ruby','asc')->get();
-        if ($selectedStudentId || $selectedName || $selectedRuby) {
+        // dd($request);
+        // $seats = Seat::orderBy('ruby','asc')->get();
+        if (!empty($selectedStudentId)) {
             $seats = Seat::
             orderBy('ruby','asc')
             ->where('studentId','=', $selectedStudentId)
-            ->orWhere('name' ,$selectedName)
-            ->orWhere('ruby' ,$selectedRuby)
+            ->get();
+
+            $columns = Schema::getColumnListing('seat');
+        }
+        elseif ($selectedName) {
+            $seats = Seat::
+            orderBy('ruby','asc')
+            ->where('name','LIKE', '%' . $selectedName . '%')
+            ->get();
+
+            $columns = Schema::getColumnListing('seat');
+        }
+        elseif ($selectedRuby) {
+            $seats = Seat::
+            orderBy('ruby','asc')
+            ->where('ruby','LIKE', '%' . $selectedRuby . '%')
             ->get();
 
             $columns = Schema::getColumnListing('seat');
@@ -45,16 +62,27 @@ class SeatController extends Controller
         else {
             $seats = Seat::orderBy('ruby','asc')->get();
         }
-        return view('seats.index',compact('seats'));
+        // dd($seats);
+        $selectedAlphabet = $request->input('alphabet');
+
+        $cources = Seat::
+            select('courceNow')
+            ->orderBy('courceNow','asc')
+            ->distinct() //重複除外
+            ->get()
+            ->pluck('courceNow') //値のみ取得
+            ->toArray();
+
+        return view('seats.index',compact('seats', 'cources'));
     }
-    public function report(Request $request, Seat $seat) {        
+    public function report(Request $request, Seat $seat, Comment $comment) {        
 
         $selectedAlphabet = $request->input('alphabet');
         // 選択されたコースと一致するレコードを取得
         $seats = Seat::
             orderBy('ruby','asc')
-            ->select('studentId','name','ruby','newStudent','forward')
-            ->where('courceNow', $selectedAlphabet)
+            ->select('id','studentId','name','ruby','newStudent','forward')
+            // ->where('courceNow', $selectedAlphabet)
             ->get();
         
         $cources = Seat::
@@ -64,8 +92,11 @@ class SeatController extends Controller
             ->get()
             ->pluck('courceNow') //値のみ取得
             ->toArray();
+
+        // $comments = Auth::user()->comments;
+        $comments = Comment::get();
         
-        return view('seats.report',compact('seats', 'cources'));
+        return view('seats.report',compact('seats', 'cources', 'comments'));
 
     }
 
@@ -172,6 +203,13 @@ class SeatController extends Controller
     }
     // 詳細ページ
     public function show(Seat $seat, Score $score) {
+        $cources = Seat::
+            select('courceNow')
+            ->orderBy('courceNow','asc')
+            ->distinct() //重複除外
+            ->get()
+            ->pluck('courceNow') //値のみ取得
+            ->toArray();
 
         function getMin($number) {
             if ($number % 10 === 0) {
@@ -268,12 +306,24 @@ class SeatController extends Controller
         }
         // グラフの出力
         $graph->Stroke(public_path('charts/chart2.png'));
+        
+        $comments = $seat->comments;
 
-        return view('seats.show', compact('seat','privateScores'));
+        // $test = gettype($seat->id);
+        // dd($seat);
+        return view('seats.show', compact('seat', 'cources', 'comments','privateScores'));
     }
     // 更新ページ
     public function edit(Seat $seat) {
-        return view('seats.edit', compact('seat'));
+        $cources = Seat::
+            select('courceNow')
+            ->orderBy('courceNow','asc')
+            ->distinct() //重複除外
+            ->get()
+            ->pluck('courceNow') //値のみ取得
+            ->toArray();
+
+        return view('seats.edit', compact('seat', 'cources'));
     }
     // 更新機能
     public function update(Request $request, Seat $seat) {
@@ -301,10 +351,24 @@ class SeatController extends Controller
         return redirect()->route('seats.show', $seat)->with('flash_message', '生徒情報を編集しました。');
     }
     // 削除機能
-    public function destroy(Seat $seat) {
-        $seat->delete();
+    public function destroy(Request $request, Seat $seat) {
+        
 
-        return redirect()->route('seats.index')->with('flash_message', '生徒情報を削除しました。');
+        // return redirect()->route('seats.index')->with('flash_message', '生徒情報を削除しました。');
+        
+        $inputPassword = $request->input('password'); // フォームからのパスワード入力値
+
+        // パスワードの検証ロジック
+        $correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
+
+        if ($inputPassword === $correctPassword) {
+            // パスワードが正しい場合の処理（削除操作など）
+            $seat->delete();
+            return redirect()->route('seats.index')->with('deleteStatus', '削除が完了しました。');
+        } else {
+            // パスワードが間違っている場合の処理
+            return redirect()->back()->with('deleteStatus', 'パスワードが間違っています。');
+        }
     }
 }
 

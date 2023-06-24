@@ -14,65 +14,41 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index(Seat $seat) {
+        $cources = Seat::
+            select('courceNow')
+            ->orderBy('courceNow','asc')
+            ->distinct() //重複除外
+            ->get()
+            ->pluck('courceNow') //値のみ取得
+            ->toArray();
 
         $seats = Seat::orderBy('ruby','asc')->get();
         $comments = Auth::user()->comments;
-        return view('seats.index', compact('seats','comments'));
+        
+        return view('seats.index', compact('seats','cources','comments'));
     }
-
-    // /**
-    //  * Show the form for creating a new resource.
-    //  *
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function create()
-    // {
-    //     //
-    // }
-
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'comment' => 'required',
         ]);
 
+        // dd($request);
         $comment = new Comment();
         $comment->comment = $request->input('comment');
         $comment->user_id = Auth::id();
-        // $comment->seat_id = $request->input('seat_id');
         $comment->save();
 
-        return redirect()->route('comments.index');
+        $comment->seats()->sync($request->input('seat_ids'));
+
+        return redirect()->route('seats.report');
     }
-
-    // /**
-    //  * Display the specified resource.
-    //  *
-    //  * @param  \App\Models\Comment  $comment
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function show(Comment $comment)
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  *
-    //  * @param  \App\Models\Comment  $comment
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function edit(Comment $comment)
-    // {
-    //     //
-    // }
 
     /**
      * Update the specified resource in storage.
@@ -81,7 +57,7 @@ class CommentController extends Controller
      * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request, Comment $comment, Seat $seat)
     {
         $request->validate([
             'comment' => 'required',
@@ -89,12 +65,11 @@ class CommentController extends Controller
 
         $comment->title = $request->input('comment');
         $comment->user_id = Auth::id();
-        // $comment->seat_id = $request->input('seat_id');
+        $comment->seat_id = $seat->id;
         $comment->save();
 
         return redirect()->route('comments.index');  
     }
-
     /**
      * Remove the specified resource from storage.
      *

@@ -20,21 +20,20 @@ Route::get('/', [CommentController::class, 'index'])->middleware('auth');
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');//App\Http\Controllers\HomeController
-
-// Route::get('/home', [SeatController::class, 'index'])->name('seats.index');
-Route::get('/report', [SeatController::class, 'report'])->name('seats.report');
-// Route::get('/report', [SeatController::class, 'report'])->name('seats.report');
-// Route::get('/report', [SeatController::class, 'report'])->name('seats.report');
-// Route::get('/search', [SeatController::class, 'search']);
-
-
+Route::resource('seats', SeatController::class);
+Route::get('/seats/csv-download',[SeatController::class, 'downloadcsv'])->name('csvDownload');
+Route::get('/report', [SeatController::class, 'report'])->name('seats.report')->middleware('auth');
+// Route::get('/test', function() {return view('seats.test');})->name('seats.test')->middleware('auth');
+Route::resource('comments', CommentController::class)->only(['index','update','destroy'])->middleware('auth');
+Route::resource('socres', ScoreController::class)->only(['index', 'store','update','destroy'])->middleware('auth');
+Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
 // // 投稿の一覧ページ
 // Route::get('/seats', [SeatController::class, 'index'])->name('seats.index');
 // // 投稿の作成ページ
 // Route::get('/seats/create', [SeatController::class, 'create'])->name('seats.create');
 // // 投稿の作成機能
-// Route::post('/seats', [SeatController::class, 'store'])->name('seats.store');
-// // 投稿の詳細ページ
+
+// 投稿の詳細ページ
 // Route::get('/seats/{seat}', [SeatController::class, 'show'])->name('seats.show');
 // // 投稿の更新ページ
 // Route::get('/seats/{seat}/edit', [SeatController::class, 'edit'])->name('seats.edit');
@@ -43,7 +42,6 @@ Route::get('/report', [SeatController::class, 'report'])->name('seats.report');
 // // 投稿の削除機能
 // Route::delete('/seats/{seat}', [SeatController::class, 'destroy'])->name('seats.destroy');
 
-Route::get('/seats/csv-download',[SeatController::class, 'downloadcsv'])->name('csvDownload');
 
-Route::resource('seats', SeatController::class);
-Route::resource('comments', CommentController::class);
+
+

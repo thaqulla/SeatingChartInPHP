@@ -10,9 +10,13 @@ class Comment extends Model
     use HasFactory;
 
     public function user () {
-        return $this->belongTo(User::class);
+        return $this->belongsTo(User::class);
     }
-    public function seat () {
-        return $this->belongTo(Seat::class);
+    // public function seat () {
+    //     return $this->belongsTo(Seat::class);
+    // }
+
+    public function seats () {
+        return $this->belongsToMany(Seat::class)->withTimestamps();
     }
 }
