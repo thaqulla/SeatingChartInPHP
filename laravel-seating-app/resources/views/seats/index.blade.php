@@ -49,21 +49,21 @@
                      -->
                     @if(Auth::check())
                         <div class="student_item item_center">
-                            <a href="{{ route('seats.show', $seat) }}" class="btn btn-outline-primary">詳細</a>
+                            <a href="{{ route('seats.show', $seat) }}" class="btn btn-outline-primary btn-sm">詳細</a>
                         </div>
                     @else
                         <div class="student_item item_center" data-tooltip="ログインしてください">
-                            <a href="#" class="disabled btn btn-outline-primary">詳細</a>
+                            <a href="#" class="disabled btn btn-outline-primary btn-sm">詳細</a>
                         </div>
                     @endif
 
                 @if(Auth::check())
                     <div class="student_item item_center">
-                        <a href="{{ route('seats.edit', $seat) }}" class="btn btn-outline-success">編集</a>
+                        <a href="{{ route('seats.edit', $seat) }}" class="btn btn-outline-success btn-sm">編集</a>
                     </div>
                 @else
                     <div class="student_item item_center">
-                        <a href="#" class="disabled btn btn-outline-success">編集</a>
+                        <a href="#" class="disabled btn btn-outline-success btn-sm">編集</a>
                     </div>
                 @endif
 
@@ -72,9 +72,9 @@
                         <form action="{{ route('seats.destroy', $seat) }}" method="post">
                             @csrf
                             @method('delete')                                        
-                            <button type="submit" class="btn btn-outline-danger">削除</button>
+                            <button type="submit" class="btn btn-outline-danger btn-sm">削除</button>
                             <!-- パスワード入力ボタン -->
-                            <button onclick="openPasswordPopup()">削除</button>
+                            <!-- <button onclick="openPasswordPopup()">削除</button> -->
                         </form>
                     </div>
                 
@@ -99,8 +99,15 @@
                 @if (session('flash_message'))
                     <p>{{ session('flash_message') }}</p>
                 @endif
-                <a href="{{ route('seats.create') }}" class="btn btn-primary">新規登録</a>     
-                <a href="{{ route('csvDownload') }}" class="btn btn-primary">CSVでダウンロード</a>                              
+                <a href="{{ route('seats.create') }}" class="btn btn-primary btn-sm" style="margin:10px;">新規登録</a>     
+                <div>
+                <a href="{{ route('downloadCSV') }}" class="btn btn-primary btn-sm" style="margin:10px;">CSVでダウンロード</a> 
+                <form action="{{--{{ route('scores.uploadForm') }}--}}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="file" name="file" style="margin:10px;">
+                    <button type="submit" class="btn btn-outline-primary btn-sm" style="margin:10px;">アップロード(実装中)</button>
+                </form>
+            </div>                   
             </div>
             <h2 class="index_head">絞り込み検索</h2>
             <form action="{{ route('seats.index') }}" method="get">
@@ -120,93 +127,65 @@
                             placeholder="氏名（カナ）" value="{{ old('ruby') }}" aria-label="Search"
                             style="display: block; margin-bottom: 10px;">
                     </div>
+                    <button class="btn btn-outline-success btn-sm" type="submit">検索</button>
                 </div>
-                <button class="btn btn-outline-success" type="submit" style="float: right;">検索</button>
             </form>
-
             
-
-        <!-- パスワード入力ボタン -->
-        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#passwordModal">
-        削除
-        </button>
-
-        <!-- パスワード入力用モーダル -->
-        <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="passwordModalLabel">パスワード入力</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="password" id="passwordInput" class="form-control" placeholder="パスワードを入力してください">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">キャンセル</button>
-                <button type="button" class="btn btn-primary" onclick="checkPassword()">確認</button>
-            </div>
-            </div>
-        </div>
-        </div>
-        <!-- パスワード入力用ポップアップ -->
-        <!-- <div id="passwordPopup" class="password-popup">
-            <div class="password-popup-content">
-                <h3>パスワード入力</h3>
-                <input type="password" id="passwordInput" placeholder="パスワードを入力してください">
-                <button onclick="checkPassword()">確認</button>
-            </div>
-        </div> -->
+            
 
         <!-- JavaScript -->
         <script>
-            function checkPassword() {
-                var password = document.getElementById('passwordInput').value;
-                var correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
+            // ファイルを選択すると、入力フォーム部分にファイル名を表示
+            $('.custom-file-input').on('change',function(){
+                $(this).next('.custom-file-label').html($(this)[0].files[0].name);
+            })
 
-                if (password === correctPassword) {
-                // パスワードが正しい場合の処理（削除操作など）
-                // ここに削除処理の実装を追加する
 
-                // モーダルを閉じる
-                $('#passwordModal').modal('hide');
-                } else {
-                alert('パスワードが間違っています。');
-                }
-            }
+            // function checkPassword() {
+            //     var password = document.getElementById('passwordInput').value;
+            //     var correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
+
+            //     if (password === correctPassword) {
+            //     // パスワードが正しい場合の処理（削除操作など）
+            //     // ここに削除処理の実装を追加する
+
+            //     // モーダルを閉じる
+            //     $('#passwordModal').modal('hide');
+            //     } else {
+            //     alert('パスワードが間違っています。');
+            //     }
+            // }
             
-            // モーダルが閉じられた後に入力フィールドをリセットする
-            $('#passwordModal').on('hidden.bs.modal', function () {
-                document.getElementById('passwordInput').value = '';
-            });
+            // // モーダルが閉じられた後に入力フィールドをリセットする
+            // $('#passwordModal').on('hidden.bs.modal', function () {
+            //     document.getElementById('passwordInput').value = '';
+            // });
 
-            function openPasswordPopup() {
-                var passwordPopup = document.getElementById('passwordPopup');
-                passwordPopup.style.display = 'flex';
-            }
+            // function openPasswordPopup() {
+            //     var passwordPopup = document.getElementById('passwordPopup');
+            //     passwordPopup.style.display = 'flex';
+            // }
 
-            function checkPassword() {
-                var password = document.getElementById('passwordInput').value;
-                var correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
+            // function checkPassword() {
+            //     var password = document.getElementById('passwordInput').value;
+            //     var correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
 
-                if (password === correctPassword) {
-                    // パスワードが正しい場合の処理（削除操作など）
-                    // ここに削除処理の実装を追加する
+            //     if (password === correctPassword) {
+            //         // パスワードが正しい場合の処理（削除操作など）
+            //         // ここに削除処理の実装を追加する
 
-                    // ポップアップを閉じる
-                    closePasswordPopup();
-                } else {
-                    alert('パスワードが間違っています。');
-                    closePasswordPopup();
-                }
-            }
+            //         // ポップアップを閉じる
+            //         closePasswordPopup();
+            //     } else {
+            //         alert('パスワードが間違っています。');
+            //         closePasswordPopup();
+            //     }
+            // }
 
-            function closePasswordPopup() {
-                var passwordPopup = document.getElementById('passwordPopup');
-                passwordPopup.style.display = 'none';
-            }
+            // function closePasswordPopup() {
+            //     var passwordPopup = document.getElementById('passwordPopup');
+            //     passwordPopup.style.display = 'none';
+            // }
         </script>
         </aside>
     </div>          

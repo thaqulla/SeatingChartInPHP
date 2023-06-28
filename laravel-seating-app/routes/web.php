@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ScoreController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,13 +21,19 @@ Route::get('/', [CommentController::class, 'index'])->middleware('auth');
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');//App\Http\Controllers\HomeController
-Route::resource('seats', SeatController::class);
-Route::get('/seats/csv-download',[SeatController::class, 'downloadcsv'])->name('csvDownload');
+Route::resource('seats', SeatController::class)->middleware('auth');
+Route::get('/csv-download',[SeatController::class, 'downloadcsv'])->name('downloadCSV');
 Route::get('/report', [SeatController::class, 'report'])->name('seats.report')->middleware('auth');
+Route::post('/report', [SeatController::class, 'report'])->name('seats.report')->middleware('auth');
 // Route::get('/test', function() {return view('seats.test');})->name('seats.test')->middleware('auth');
-Route::resource('comments', CommentController::class)->only(['index','update','destroy'])->middleware('auth');
-Route::resource('socres', ScoreController::class)->only(['index', 'store','update','destroy'])->middleware('auth');
-Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
+Route::resource('comments', CommentController::class)->middleware('auth');
+// Route::resource('scores', ScoreController::class)->only(['index', 'store','update','destroy'])->middleware('auth');
+Route::post('comments', [CommentController::class, 'store'])->name('comments.store')->middleware('auth');
+Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy')->middleware('auth');
+Route::get('/upload', 'ScoreController@showUploadForm')->name('scores.uploadForm')->middleware('auth');
+Route::post('/upload', 'ScoreController@upload')->name('scores.upload')->middleware('auth');
+
+
 // // 投稿の一覧ページ
 // Route::get('/seats', [SeatController::class, 'index'])->name('seats.index');
 // // 投稿の作成ページ

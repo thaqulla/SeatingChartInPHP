@@ -17,11 +17,12 @@
                     @endforeach
                     </div>
                 @endif
+                <label class="edit_label" for="studentId">生徒番号</label>
+                <input class="edit_item" type="text" name="studentId" value="{{ old('studentId', $seat->studentId) }}" placeholder="生徒番号"><br>
                 <label class="edit_label" for="name">氏名(漢字)</label>
-                <input class="edit_item" type="text" name="name" value="{{ old('name', $seat->name) }}" placeholder="Name"><br>
-                
+                <input class="edit_item" type="text" name="name" value="{{ old('name', $seat->name) }}" placeholder="漢字"><br>
                 <label class="edit_label" for="ruby">氏名(カナ)</label><br>
-                <input class="edit_item" type="text" name="ruby" value="{{ old('ruby', $seat->ruby) }}" placeholder="Email"><br>
+                <input class="edit_item" type="text" name="ruby" value="{{ old('ruby', $seat->ruby) }}" placeholder="フリガナ"><br>
                 
                 <label class="edit_label" for="remarks">備考</label><br>
                 <textarea class="edit_item" type="text" name="remarks" placeholder="Message">{{ old('remarks', $seat->remarks) }}</textarea><br>

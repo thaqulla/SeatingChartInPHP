@@ -107,19 +107,6 @@ class SeatController extends Controller
     public function resultData(Request $request, Seat $seat) {        
 
         $selectedAlphabet = $request->input('search');
-
-        // 入力のバリデーションを行う
-        // $validator = Validator::make($request->all(), [
-        //     'search' => [
-        //         'required',
-        //         'string',
-        //         Rule::where(function ($query) use ($search) {
-        //             $query->where('studentId', '=', $search)
-        //                   ->orWhere('studentId', '=', mb_convert_kana($search, 'n'));
-        //         })
-        //     ],
-        // ]);
-
         // 選択されたコースと一致するレコードを取得
         $result = Seat::
             where('ruby', 'like', "%", $search, "%")
@@ -130,6 +117,14 @@ class SeatController extends Controller
     }
     // 作成ページ
     public function create() {
+        $cources = Seat::
+            select('courceNow')
+            ->orderBy('courceNow','asc')
+            ->distinct() //重複除外
+            ->get()
+            ->pluck('courceNow') //値のみ取得
+            ->toArray();
+
     // $studentNumber = $request->input('student_number');
 
     // $existingStudent = Student::where('student_number', $studentNumber)->first();
@@ -137,7 +132,7 @@ class SeatController extends Controller
     // if ($existingStudent) {
     //     return back()->with('error', '登録されていますよ');
     // }
-        return view('seats.create');
+        return view('seats.create',compact('cources'));
     }
     //csvダウンロード機能
     public function downloadcsv() {
@@ -249,69 +244,79 @@ class SeatController extends Controller
             $societyDeviations[] = $score->societyDeviation;
         }
 
-        $maxs = [max($fourDeviations),
-                max($mathDeviations),
-                max($JapaneseDeviations),
-                max($scienceDeviations),
-                max($societyDeviations)];
 
-        $mins = [min($fourDeviations),
-                min($mathDeviations),
-                min($JapaneseDeviations),
-                min($scienceDeviations),
-                min($societyDeviations)];
-
-        // グラフ生成前にフォントのパスを指定
-        // ipam.ttf、ipamp.ttf、ipag.ttf、ipagp.ttf
-        // FF_MINCHO、FF_PMINCHO、FF_GOTHIC、FF_PGOTHICの順で設定
-        putenv('GDFONTPATH=' . resource_path('fonts'));
-
-        // グラフ生成
-        $chartWidth = 700;
-        $chartHeight = 400;
-        $graph = new \Graph($chartWidth, $chartHeight);
-
-        $graph->SetScale("textlin");
-        $graph->SetMargin(50, 30, 20, 50);
-        $graph->title->Set("偏差値推移");
-        $graph->title->SetFont(FF_MINCHO, FS_NORMAL, 14);
-        // $graph->title->SetFont(FF_FONT1, FS_BOLD);
-        $graph->xaxis->SetTickLabels($testNames);
-        $graph->yaxis->scale->SetAutoMin(getMin(min($mins)));
-        $graph->yaxis->scale->SetAutoMax(getMax(max($maxs)));
-
-
-        $data = [
-            $fourDeviations,
-            $mathDeviations,
-            $JapaneseDeviations,
-            $scienceDeviations,
-            $societyDeviations
-        ];
+        if (count($fourDeviations) > 0) {
+            
         
-        $colors = ["blue", "green", "red", "orange", "black"];
-        $subject = ["四科","算数","国語","理科","社会"];
-        // $colors = ["#1374e9", "#1c9440", "#e4382a", "#fbc20f", "#202124"];
-        // $colors = [0, 1, 2, 3, 4];
-        foreach ($data as $i => $scores) {
-            $lineplot = new \LinePlot($scores);
-            $lineplot->SetLegend($subject[$i]);
-            $graph->legend->SetFont(FF_MINCHO, FS_NORMAL, 14);
-            $lineplot->SetColor($colors[$i]);
-            // マーカーの設定
-            $lineplot->mark->SetType(MARK_UTRIANGLE); // マーカーの種類を設定
-            $lineplot->mark->SetFillColor($colors[$i]); // マーカーの塗りつぶし色を設定
-            $lineplot->mark->SetSize(4); // マーカーのサイズを設定
-            $graph->Add($lineplot);
+            $maxs = [max($fourDeviations),
+                    max($mathDeviations),
+                    max($JapaneseDeviations),
+                    max($scienceDeviations),
+                    max($societyDeviations)];
+
+            $mins = [min($fourDeviations),
+                    min($mathDeviations),
+                    min($JapaneseDeviations),
+                    min($scienceDeviations),
+                    min($societyDeviations)];
+
+            // グラフ生成前にフォントのパスを指定
+            // ipam.ttf、ipamp.ttf、ipag.ttf、ipagp.ttf
+            // FF_MINCHO、FF_PMINCHO、FF_GOTHIC、FF_PGOTHICの順で設定
+            putenv('GDFONTPATH=' . resource_path('fonts'));
+
+            // グラフ生成
+            $chartWidth = 700;
+            $chartHeight = 400;
+            $graph = new \Graph($chartWidth, $chartHeight);
+
+            $graph->SetScale("textlin");
+            $graph->SetMargin(50, 30, 20, 50);
+            $graph->title->Set("偏差値推移");
+            $graph->title->SetFont(FF_MINCHO, FS_NORMAL, 14);
+            // $graph->title->SetFont(FF_FONT1, FS_BOLD);
+            $graph->xaxis->SetTickLabels($testNames);
+            $graph->yaxis->scale->SetAutoMin(getMin(min($mins)));
+            $graph->yaxis->scale->SetAutoMax(getMax(max($maxs)));
+
+
+            $data = [
+                $fourDeviations,
+                $mathDeviations,
+                $JapaneseDeviations,
+                $scienceDeviations,
+                $societyDeviations
+            ];
+            
+            $colors = ["blue", "green", "red", "orange", "black"];
+            $subject = ["四科","算数","国語","理科","社会"];
+            // $colors = ["#1374e9", "#1c9440", "#e4382a", "#fbc20f", "#202124"];
+            // $colors = [0, 1, 2, 3, 4];
+            foreach ($data as $i => $scores) {
+                $lineplot = new \LinePlot($scores);
+                $lineplot->SetLegend($subject[$i]);
+                $graph->legend->SetFont(FF_MINCHO, FS_NORMAL, 14);
+                $lineplot->SetColor($colors[$i]);
+                // マーカーの設定
+                $lineplot->mark->SetType(MARK_UTRIANGLE); // マーカーの種類を設定
+                $lineplot->mark->SetFillColor($colors[$i]); // マーカーの塗りつぶし色を設定
+                $lineplot->mark->SetSize(4); // マーカーのサイズを設定
+                $graph->Add($lineplot);
+            }
+            // グラフの出力
+            $graph->Stroke(public_path('charts/chart2.png'));
+            $existence = 1;
+        
+        } else {
+            // https://dummyimage.com/700x400/cecece/fff
+            $existence = 0;
         }
-        // グラフの出力
-        $graph->Stroke(public_path('charts/chart2.png'));
-        
+
         $comments = $seat->comments;
 
         // $test = gettype($seat->id);
         // dd($seat);
-        return view('seats.show', compact('seat', 'cources', 'comments','privateScores'));
+        return view('seats.show', compact('seat', 'cources', 'comments','privateScores','existence'));
     }
     // 更新ページ
     public function edit(Seat $seat) {
@@ -328,7 +333,7 @@ class SeatController extends Controller
     // 更新機能
     public function update(Request $request, Seat $seat) {
         $request->validate([
-            // 'studentId' => 'required',
+            'studentId' => 'required',
             'name' => 'required',
             'ruby' => 'required',
             // 'courceOld' => 'required',
@@ -338,7 +343,7 @@ class SeatController extends Controller
             'remarks' => 'required',
         ]);
 
-        // $seat->studentId = $request->input('studentId');
+        $seat->studentId = $request->input('studentId');
         $seat->name = $request->input('name');
         $seat->ruby = $request->input('ruby');
         // $seat->courceOld = $request->input('courceOld');
@@ -352,23 +357,23 @@ class SeatController extends Controller
     }
     // 削除機能
     public function destroy(Request $request, Seat $seat) {
-        
+        $seat->delete();
 
-        // return redirect()->route('seats.index')->with('flash_message', '生徒情報を削除しました。');
+        return redirect()->route('seats.index')->with('flash_message', '生徒情報を削除しました。');
         
-        $inputPassword = $request->input('password'); // フォームからのパスワード入力値
+        // $inputPassword = $request->input('password'); // フォームからのパスワード入力値
 
         // パスワードの検証ロジック
-        $correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
+        // $correctPassword = 'password123'; // 正しいパスワード（ダミーデータ）
 
-        if ($inputPassword === $correctPassword) {
+        // if ($inputPassword === $correctPassword) {
             // パスワードが正しい場合の処理（削除操作など）
-            $seat->delete();
-            return redirect()->route('seats.index')->with('deleteStatus', '削除が完了しました。');
-        } else {
+        //     $seat->delete();
+        //     return redirect()->route('seats.index')->with('deleteStatus', '削除が完了しました。');
+        // } else {
             // パスワードが間違っている場合の処理
-            return redirect()->back()->with('deleteStatus', 'パスワードが間違っています。');
-        }
+            // return redirect()->back()->with('deleteStatus', 'パスワードが間違っています。');
+    //     }
     }
 }
 

@@ -12,44 +12,42 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              コース選択
+            <a class="nav-link dropdown-toggle disabled" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              コース選択(実装中)
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
               @auth
-              <a class="dropdown-item" href="{{ route('seats.report') }}">全コース</a>
-              <li><hr class="dropdown-divider"></li>
-              @foreach($cources as $cource)
-                <li>
-                  <a class="dropdown-item" href="{{ route('seats.report') }}">
-                    {{ $cource }}コース
-                  </a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-              @endforeach
+                <form method="POST" action="{{ route('seats.report') }}">
+                  @csrf
+                  <input type="hidden" name="selectedCource" value="allCources">
+                  <button type="submit" class="dropdown-item">
+                    全コース
+                  </button>
+                
+                  <li><hr class="dropdown-divider"></li>
+                  @foreach($cources as $cource)
+                    <li>
+                      @csrf
+                      <input type="hidden" name="selectedCource" value="{{ $cource }}">
+                      <button type="submit" class="dropdown-item">
+                        {{ $cource }}コース
+                      </button>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                  @endforeach
+                </form>
               @endauth
-              <!-- <li><a class="dropdown-item" href="#">Another action</a></li> -->
-              
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
             </ul>
           </li>
-          <!-- <form action="/submit" method="POST">
-            <label for="name">名前:</label>
-            <input type="text" id="name" name="name" required><br>
-            <input type="submit" value="送信">
-          </form> -->
-          <!-- <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-          </li> -->
+
+          <li class="nav-item">
+            <a class="nav-link " href="{{ route('seats.report') }}" tabindex="-1" aria-disabled="true">
+              全コース
+            </a>
+          </li>
         </ul>
-        <!-- <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form> -->
- 
-        <!-- Right Side Of Navbar -->
         <ul class="navbar-nav ms-auto">
-        <!-- Authentication Links -->
         @guest
           @if (Route::has('login'))
             <li class="nav-item">
