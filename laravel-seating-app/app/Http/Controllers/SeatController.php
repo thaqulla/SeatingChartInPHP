@@ -73,6 +73,8 @@ class SeatController extends Controller
             ->pluck('courceNow') //値のみ取得
             ->toArray();
 
+            
+
         return view('seats.index',compact('seats', 'cources'));
     }
     public function report(Request $request, Seat $seat, Comment $comment) {        
@@ -100,9 +102,41 @@ class SeatController extends Controller
 
     }
 
-    public function search(Seat $seat) {     
+    public function upload(Request $request) {     
+        // ファイルを開く
+        // r	読み込み専用
+        // w	書き出し専用
+        // a	追加書き出し
+        $file = $request->file('seatFiles');
+        $filePath = $file->getPathname();
 
-        return view('seats.search', compact('seat'));
+        // $data = []; // 表示するデータを格納する配列
+        $headerSkipped = false;
+        if (($handle = fopen($filePath, 'r')) !== false) {
+            while (($row = fgetcsv($handle)) !== false) {
+                if (!$headerSkipped) {
+                    $headerSkipped = true;
+                    continue; // ヘッダー行をスキップして次のイテレーションへ
+                }
+        
+                // $data[] = $row; // CSVデータを配列に追加
+                // 新しいSeatモデルインスタンスを作成
+                $seat = new Seat();
+                $seat->studentId = $row[0];
+                $seat->name = $row[1];
+                $seat->ruby = $row[2];
+                $seat->courceOld = $row[3];
+                $seat->courceNow = $row[4];
+                $seat->newStudent = boolval($row[5]);
+                $seat->forward = boolval($row[6]);
+                $seat->remarks = $row[7];
+                $seat->save();
+            }
+    
+            fclose($handle);
+        }
+        return redirect()->route('seats.index')->with('flash_message', '更新が完了しました。');
+        // return view('seats.upload', compact('data'));
     }
     public function resultData(Request $request, Seat $seat) {        
 

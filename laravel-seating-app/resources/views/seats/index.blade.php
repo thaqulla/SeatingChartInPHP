@@ -101,13 +101,13 @@
                 @endif
                 <a href="{{ route('seats.create') }}" class="btn btn-primary btn-sm" style="margin:10px;">新規登録</a>     
                 <div>
-                <a href="{{ route('downloadCSV') }}" class="btn btn-primary btn-sm" style="margin:10px;">CSVでダウンロード</a> 
-                <form action="{{--{{ route('scores.uploadForm') }}--}}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="file" name="file" style="margin:10px;">
-                    <button type="submit" class="btn btn-outline-primary btn-sm" style="margin:10px;">アップロード(実装中)</button>
-                </form>
-            </div>                   
+                    <a href="{{ route('downloadCSV') }}" class="btn btn-primary btn-sm" style="margin:10px;">CSVでダウンロード</a> 
+                    <form action="{{ route('seats.upload') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" name="seatFiles" style="margin:10px;">
+                        <button type="submit" class="btn btn-outline-primary btn-sm" style="margin:10px;">アップロード(実装中)</button>
+                    </form>
+                </div>                   
             </div>
             <h2 class="index_head">絞り込み検索</h2>
             <form action="{{ route('seats.index') }}" method="get">
