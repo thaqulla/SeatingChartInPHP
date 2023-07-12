@@ -330,6 +330,7 @@ class SeatController extends Controller
                 $lineplot = new \LinePlot($scores);
                 $lineplot->SetLegend($subject[$i]);
                 $graph->legend->SetFont(FF_MINCHO, FS_NORMAL, 14);
+                $graph->legend->Pos(0.05,0.08,"right","top");
                 $lineplot->SetColor($colors[$i]);
                 // マーカーの設定
                 $lineplot->mark->SetType(MARK_UTRIANGLE); // マーカーの種類を設定

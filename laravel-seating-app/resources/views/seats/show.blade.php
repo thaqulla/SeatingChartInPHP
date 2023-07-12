@@ -9,7 +9,7 @@
     <div class="show_container">
 
         <article class="show_item">
-            <div>
+            <div style="margin: 10px;">
                 @if (session('flash_message'))
                   <div>{{ session('flash_message') }}</div>
                 @endif
@@ -41,33 +41,30 @@
                         <span style="font-size: 24px;">{{ $seat->courceNow }}</span>
                         <span>(旧コース:{{ $seat->courceOld }})</span>
                     </div>
-                    
                 </div>
-            
                 <div class="show_detail_container">
                     <div style="background-color: #6ccb5f; text-align: right;">
                         備考&nbsp;
                     </div>
-                    
                     <div style="text-align: left; overflow-wrap: break-word;">
                         &nbsp;{{ $seat->remarks }}
                     </div>
                 </div>
-                <div>
+                <div style="margin: 10px;">
                     <div class="d-flex justify-content-end">
                         <span>更新日{{ \Carbon\Carbon::parse($seat->updated_at)->format('Y年m月d日') }}</span>
                         <a class="item_center btn btn-outline-primary btn-sm" href="{{ route('seats.edit', $seat) }}">
                             編集
                         </a>
-                        <div class="ml-2">
-                            <div class="student_item item_center"> 
-                            <form action="{{ route('seats.destroy', $seat) }}" method="post">
-                                @csrf
-                                @method('delete')                                        
-                                <button type="submit" class="btn btn-outline-danger btn-sm">削除</button>
-                            </form>
-                            </div>
-                        </div>
+                        <!-- <div class="ml-2">
+                            <div class="student_item item_center">  -->
+                        <form action="{{ route('seats.destroy', $seat) }}" method="post">
+                            @csrf
+                            @method('delete')                                        
+                            <button type="submit" class="btn btn-outline-danger btn-sm">削除</button>
+                        </form>
+                            <!-- </div>
+                        </div> -->
                     </div>
                 </div>    
 
@@ -80,9 +77,9 @@
                 <div class="show_commment_container">
                     <div class="show_comment_item">
                         {{ \Carbon\Carbon::parse($comment->created_at)->format('Y年m月d日') }}<br>
-                        @if($comment->created_at != $comment->updated_at)
-                            ({{ \Carbon\Carbon::parse($comment->updated_at)->format('m月d日') }}更新)
-                        @endif
+                    @if($comment->created_at != $comment->updated_at)
+                        ({{ \Carbon\Carbon::parse($comment->updated_at)->format('m月d日') }}更新)
+                    @endif
                     </div>
                     <div class="show_comment_item">{{ $comment->user->name }}</div>
                     <div class="show_comment_item">{{ $comment->comment }}</div>
@@ -94,10 +91,11 @@
             @endif
 
             @include('modals.add_comment')  
-            <div class="d-flex justify-content-end">
+            <div style="margin: 10px;" class="d-flex justify-content-end">
                 <a href="#" class="link-dark text-decoration-none" data-bs-toggle="modal" data-bs-target="#addGoalModal">
                     <div class="d-flex align-items-center">
                         <span class="btn btn-outline-success btn-sm">コメント追加</span>
+                        
                     </div>
                 </a>          
             </div>  
@@ -124,11 +122,11 @@
                 @foreach ($privateScores as $score)
                     <div class="score_container">
                         <div class="student_item item_center">{{ $score->testName }}</div>
-                        <div class="student_item item_center">{{ $score->fourDeviation }}</div>
-                        <div class="student_item item_center">{{ $score->mathDeviation }}</div>
-                        <div class="student_item item_center">{{ $score->JapaneseDeviation }}</div>
-                        <div class="student_item item_center">{{ $score->scienceDeviation }}</div>
-                        <div class="student_item item_center">{{ $score->societyDeviation }}</div>
+                        <div class="student_item item_center">{{ number_format($score->fourDeviation, 1) }}</div>
+                        <div class="student_item item_center">{{ number_format($score->mathDeviation, 1) }}</div>
+                        <div class="student_item item_center">{{ number_format($score->JapaneseDeviation, 1) }}</div>
+                        <div class="student_item item_center">{{ number_format($score->scienceDeviation, 1) }}</div>
+                        <div class="student_item item_center">{{ number_format($score->societyDeviation, 1) }}</div>
                     </div>
                 @endforeach   
             </div>      
@@ -146,11 +144,11 @@
             @foreach ($privateScores as $score)
                 <div class="score_container">
                     <div class="student_item item_center">{{ $score->testName }}</div>
-                    <div class="student_item item_center">{{ $score->fourScore }}</div>
-                    <div class="student_item item_center">{{ $score->mathScore }}</div>
-                    <div class="student_item item_center">{{ $score->JapaneseScore }}</div>
-                    <div class="student_item item_center">{{ $score->scienceScore }}</div>
-                    <div class="student_item item_center">{{ $score->societyScore }}</div>
+                    <div class="student_item item_center">{{ $score->fourScore }}&nbsp;/&nbsp;400</div>
+                    <div class="student_item item_center">{{ $score->mathScore }}&nbsp;/&nbsp;100</div>
+                    <div class="student_item item_center">{{ $score->JapaneseScore }}&nbsp;/&nbsp;100</div>
+                    <div class="student_item item_center">{{ $score->scienceScore }}&nbsp;/&nbsp;100</div>
+                    <div class="student_item item_center">{{ $score->societyScore }}&nbsp;/&nbsp;100</div>
                 </div>
             @endforeach            
                 

@@ -24,6 +24,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');//App\Http\C
 Route::resource('seats', SeatController::class)->middleware('auth');
 Route::get('/csv-download',[SeatController::class, 'downloadcsv'])->name('downloadCSV');
 Route::post('/csv-upload', [SeatController::class, 'upload'])->name('seats.upload')->middleware('auth');
+Route::post('/score-upload', [ScoreController::class, 'upload'])->name('scores.upload')->middleware('auth');
 Route::get('/report', [SeatController::class, 'report'])->name('seats.report')->middleware('auth');
 Route::post('/report', [SeatController::class, 'report'])->name('seats.report')->middleware('auth');
 // Route::get('/test', function() {return view('seats.test');})->name('seats.test')->middleware('auth');
@@ -31,9 +32,6 @@ Route::resource('comments', CommentController::class)->middleware('auth');
 // Route::resource('scores', ScoreController::class)->only(['index', 'store','update','destroy'])->middleware('auth');
 Route::post('comments', [CommentController::class, 'store'])->name('comments.store')->middleware('auth');
 Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy')->middleware('auth');
-// Route::get('/upload', 'ScoreController@showUploadForm')->name('scores.uploadForm')->middleware('auth');
-// Route::post('/upload', 'ScoreController@upload')->name('scores.upload')->middleware('auth');
-
 
 // // 投稿の一覧ページ
 // Route::get('/seats', [SeatController::class, 'index'])->name('seats.index');
